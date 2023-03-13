@@ -1,3 +1,7 @@
+# Neat script that converts images and generates a ready to compile template
+# Author    : Shtoyan
+# Home repo : https://github.com/InsultingPros/KFEmojiPack
+# License   : https://www.gnu.org/licenses/gpl-3.0.en.html
 import os
 from pathlib import Path
 
