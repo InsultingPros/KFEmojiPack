@@ -4,6 +4,7 @@
 # License   : https://www.gnu.org/licenses/gpl-3.0.en.html
 import os
 from pathlib import Path
+from shutil import rmtree
 
 try:
     from PIL import Image
@@ -14,7 +15,7 @@ except Exception as e:
 # what format we want for output files?
 FILE_FORMAT: str = "TGA"
 # must be in degrees of 2
-RESIZE_DIMENSIONS: tuple[int, int] = [32, 32]
+RESIZE_DIMENSIONS: tuple[int, int] = (32, 32)
 EXEC_DIRECTIVE: str = (
     r"#exec TEXTURE IMPORT FILE=Output\{tmp}.TGA NAME={tmp} MIPS=0 MASKED=1 DXT=3"
 )
@@ -114,6 +115,17 @@ def create_config_template(input_path: Path, file_list: list[str]) -> None:
         print(str(err))
 
 
+def cleanup_output(path_output: Path) -> None:
+    # https://docs.python.org/3/library/shutil.html#rmtree-example
+    def remove_readonly(func, path, _) -> None:
+        """Clear the readonly bit and reattempt the removal"""
+        Path(path).chmod(0o0200)
+        func(path)
+
+    if path_output.exists():
+        rmtree(path_output, onerror=remove_readonly)
+
+
 def main() -> None:
     absolute_path: Path = Path(os.path.dirname(__file__))
 
@@ -132,8 +144,9 @@ def main() -> None:
     if not path_classes.exists():
         path_classes.mkdir(parents=True, exist_ok=True)
 
-    if not path_output.exists():
-        path_output.mkdir(parents=True, exist_ok=True)
+    # cleanup `Output` from your old experiments
+    cleanup_output(path_output)
+    path_output.mkdir(parents=True, exist_ok=True)
 
     if not path_configs.exists():
         path_configs.mkdir(parents=True, exist_ok=True)
