@@ -2,32 +2,39 @@
 # Author    : Shtoyan
 # Home repo : https://github.com/InsultingPros/KFEmojiPack
 # License   : https://www.gnu.org/licenses/gpl-3.0.en.html
-import os
+
 from pathlib import Path
 from shutil import rmtree
+from sys import exit as s_exit
+from typing import Any, Final
 
 try:
     from PIL import Image
 except Exception as e:
     print(str(e))
-    input("Install Pillow to continue `pip install Pillow`...")
+    input(
+        (
+            "Install Pillow to continue -> pip install Pillow\n"
+            "Press any key to continue..."
+        )
+    )
+    s_exit()
 
 # what format we want for output files?
-FILE_FORMAT: str = "TGA"
+FILE_FORMAT: Final[str] = "TGA"
 # must be in degrees of 2
-RESIZE_DIMENSIONS: tuple[int, int] = (32, 32)
-EXEC_DIRECTIVE: str = (
-    r"#exec TEXTURE IMPORT FILE=Output\{tmp}.TGA NAME={tmp} MIPS=0 MASKED=1 DXT=3"
-)
+RESIZE_DIMENSIONS: Final[tuple[int, int]] = (32, 32)
+EXEC_DIRECTIVE: Final[
+    str
+] = r"#exec TEXTURE IMPORT FILE=Output\{tmp}.TGA NAME={tmp} MIPS=0 MASKED=1 DXT=3"
 SERVERPERKS_TEMPLATE: str = (
     """SmileyTags=(iconTexture="{texure_ref}",IconTag="{tag}",bCaseInsensitive=False)"""
 )
 
-formats_list: list[str] = [
+EXTENSIONS: Final[list[str]] = [
     ".BMP",
     ".DIB",
     ".EPS",
-    ".GIF",
     ".ICNS",
     ".ICO",
     ".IM",
@@ -53,19 +60,18 @@ def parse_input_files(input_path: Path, output_path: Path) -> list[str]:
     """Check `Input` folder and convert files to `Output`.
     Returns list of files for further use."""
     file_list: list[str] = []
-    lancoz: Image.Resampling = Image.Resampling(1)
 
     for path_object in input_path.rglob("*"):
         if path_object.is_file():
-            if path_object.suffix.upper() not in formats_list:
+            if path_object.suffix.upper() not in EXTENSIONS:
                 continue
 
-            base_name: str = "{}.{}".format(path_object.stem, FILE_FORMAT)
+            base_name: str = f"{path_object.stem}.{FILE_FORMAT}"
             opath: Path = output_path.joinpath(base_name)
             try:
                 with Image.open(path_object) as image:
-                    resized_image: Image = image.resize(
-                        RESIZE_DIMENSIONS, resample=lancoz
+                    resized_image = image.resize(
+                        RESIZE_DIMENSIONS, resample=Image.LANCZOS
                     )
                     resized_image.save(opath)
                     file_list.append(path_object.stem)
@@ -115,9 +121,9 @@ def create_config_template(input_path: Path, file_list: list[str]) -> None:
         print(str(err))
 
 
-def cleanup_output(path_output: Path) -> None:
+def remove_dir(path_output: Path) -> None:
     # https://docs.python.org/3/library/shutil.html#rmtree-example
-    def remove_readonly(func, path, _) -> None:
+    def remove_readonly(func: Any, path: Any, _: Any) -> None:
         """Clear the readonly bit and reattempt the removal"""
         Path(path).chmod(0o0200)
         func(path)
@@ -127,39 +133,46 @@ def cleanup_output(path_output: Path) -> None:
 
 
 def main() -> None:
-    absolute_path: Path = Path(os.path.dirname(__file__))
-
-    path_input: Path = absolute_path.joinpath("Input")
-    path_output: Path = absolute_path.joinpath("Output")
-    path_classes: Path = absolute_path.joinpath("Classes")
-    path_configs: Path = absolute_path.joinpath("Configs")
+    my_path: Path = Path(__file__).parent
+    path_input: Path = my_path.joinpath("Input")
+    path_output: Path = my_path.joinpath("Output")
+    path_classes: Path = my_path.joinpath("Classes")
+    path_configs: Path = my_path.joinpath("Configs")
 
     if not path_input.exists():
         path_input.mkdir(parents=True, exist_ok=True)
         print(
-            "You did not have `Input` folder. We fixed it for you, no go and put some files to there!"
+            (
+                "You did not have `Input` folder. "
+                "We fixed it for you, no go and put some files to there!"
+            )
         )
-        exit()
+        s_exit()
 
     if not path_classes.exists():
         path_classes.mkdir(parents=True, exist_ok=True)
 
     # cleanup `Output` from your old experiments
-    cleanup_output(path_output)
+    remove_dir(path_output)
     path_output.mkdir(parents=True, exist_ok=True)
 
     if not path_configs.exists():
         path_configs.mkdir(parents=True, exist_ok=True)
 
     file_list: list[str] = parse_input_files(path_input, path_output)
-    if len(file_list) == 0:
+    if not file_list:
         print("There were no files in Input folder! Exiting!")
-        exit()
+        s_exit()
 
     add_files_to_generator(path_classes, file_list)
     create_config_template(path_configs, file_list)
 
-    input("Script did the magic! Now compile your emoji pack!")
+    input(
+        (
+            "Script did the magic! Now compile your emoji pack!\n"
+            "Press any key to continue..."
+        )
+    )
 
 
 if __name__ == "__main__":

@@ -47,7 +47,7 @@ Done! Start your server and enjoy.
 ## Supported input file formats
 
 ```text
-BMP, DIB, EPS, GIF, ICNS, ICO, IM, JPG, JPEG, J2K, J2P, JPX, MSP, PCX, PNG, PPM, SGI, SPIDER, TGA, TIFF, WebP, XBM.
+BMP, DIB, EPS, ICNS, ICO, IM, JPG, JPEG, J2K, J2P, JPX, MSP, PCX, PNG, PPM, SGI, SPIDER, TGA, TIFF, WebP, XBM.
 ```
 
 ## Credits
