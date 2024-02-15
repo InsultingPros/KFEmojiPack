@@ -1,0 +1,36 @@
+name: Publish
+
+permissions:
+  contents: write
+
+on:
+  release:
+    types: [created]
+
+jobs:
+  publish-rust:
+    name: Publish for ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Rust Toolchain
+        run: rustup toolchain install stable --profile minimal
+
+      # can't use caches in tag scope... thanks github!
+      - name: Publish CLI Binary
+        uses: taiki-e/upload-rust-binary-action@v1
+        with:
+          # (required) Comma-separated list of binary names (non-extension portion of filename) to build and upload.# Note that glob pattern is not supported yet.
+          bin: kf_emoji_generator
+          # (optional) On which platform to distribute the .tar.gz file.# [default value: unix]# [possible values: all, unix, windows, none]
+          tar: unix
+          zip: windows
+          archive: $bin-$tag-$target
+          token: ${{ secrets.GITHUB_TOKEN }}

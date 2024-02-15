@@ -1,0 +1,20 @@
+[package]
+name = "kf_emoji_generator"
+version = "0.1.0"
+edition = "2021"
+rust-version = "1.76"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+[profile.release]
+codegen-units = 1
+lto = "fat"
+panic = "abort"
+strip = true
+
+[dev-dependencies]
+serial_test = "3"
+
+[dependencies]
+image = "0.25.1"
+gumdrop = "0"
+rayon = "1"
