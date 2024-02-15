@@ -1,22 +1,19 @@
-[KF Compile Tool]: https://github.com/InsultingPros/KFCompileTool
+# KF Emoji Pack Generator
+
+## General Information
+
 [DXT compression]: https://beyondunrealwiki.github.io/pages/dxt.html
 [dkanus]: https://github.com/dkanus
 [Marco]: https://steamcommunity.com/profiles/76561197975509070
 [Server Perks]: https://forums.tripwireinteractive.com/index.php?threads/mut-per-server-stats.36898/
-[Python >3.10.x]: https://www.python.org/downloads/
-[Pillow]: https://pillow.readthedocs.io/en/stable/
 [android 7 emojis]: https://emojipedia.org/google/android-7.0/
-[ServerPerks_Template.ini]: Configs/ServerPerks_Template.ini
+[releases]: https://github.com/InsultingPros/KFEmojiPack/releases
+[build_badge]: https://img.shields.io/github/actions/workflow/status/InsultingPros/KFEmojiPack/test.yml?style=for-the-badge
+[release_badge]: https://img.shields.io/github/downloads/InsultingPros/KFEmojiPack/total?style=for-the-badge
 
-# KF Emoji Pack
+[![build_badge]](https://github.com/InsultingPros/KFEmojiPack/actions/workflows/test.yml) [![release_badge]](https://github.com/InsultingPros/KFEmojiPack/releases)
 
-[![GitHub all releases](https://img.shields.io/github/downloads/InsultingPros/KFEmojiPack/total)](https://github.com/InsultingPros/KFEmojiPack/releases)
-
-This project aims to make [Server Perks] emoji pack creation much easier. There are several community made packs, but they are well hidden and there is almost no up-to-date documentation on how to make them. So I'm filling that gap.
-
-With **KFEmojiPack** you can simply drag-n-drop images, click on a script and get a ready to use file. No SDK or long googling required.
-
-This mod provides a compiled example with [android 7 emojis] and a handy script which allows to create your custom pack in few clicks.
+This project aims to make [Server Perks] emoji pack creation much easier. There are several community made packs, but they are well hidden and there is almost no up-to-date documentation on how to make them. So we are filling that gap.
 
 ![img](Docs/example.png)
 
@@ -24,34 +21,58 @@ This mod provides a compiled example with [android 7 emojis] and a handy script 
 say some smiles: face-with-tears-of-joy pile-of-poo nauseated-face kissing-face face-savouring-delicious-food thinking-face hell yea
 ```
 
-## Usage
+With **KF Emoji Pack Generator** you can simply drag-n-drop images, run a single exectible and get a ready to compile files. No SDK or long googling required.
 
-1. Download the [release](https://github.com/InsultingPros/KFEmojiPack/releases) / clone the repository.
-2. Rename the folder to your desired name. `MyLittlePonyEmojis` will work.
-3. Set it for compilation (use [KF Compile Tool] to make it easier).
-4. Install [Python >3.10.x] and [Pillow] (`requirements.txt` is also provided).
-5. Put your images into `Input` folder (this mod has some default ones as a template).
-6. Click on `Converter.py`. That will:
-    - Convert all images to required format.
-    - Resize them in the most efficent way and move to `Output` folder.
-    - Auto-generate exec directives in `GenerateTexture.uc`.
-    - Auto-generate [ServerPerks_Template.ini] with all required smile lines.
-7. Compile the mod.
-8. Manually change compiled file extension from `.u` to `.utx`. And do not forget about redirect file!
-9. Copy-paste `SmileyTags` lines from generated [ServerPerks_Template.ini] to your server's `ServerPerks.ini`.
+This repo provides a compiled example with [android 7 emojis] and a handy script which allows to create your custom pack in few clicks.
 
-Done! Start your server and enjoy.
+## Basic Usage
 
-> **Note** If you want to resize emojis tweak `RESIZE_DIMENSIONS` inside `Converter.py`. 128x128 are shown in example screenshot, 32x32 will be same size as the other text. And if you want to make emoji pack a bit smaller, change the [DXT compression] as well.
+1. Download `kf_emoji_generator` from [releases], and extract the archive anywhere you want.
+2. Run `kf_emoji_generator` once, it will create `input` directory nearby.
+3. Put your fancy images there.
+4. Run `kf_emoji_generator` again. It will generate several direcories:
+    - `output`  - your images from `input` will be resized, converted into `TGA` and moved here.
+    - `classes` - generates `GenerateTexture.uc` with corresponding exec directives. This is the file you want to compile.
+    - `configs` - generates `ServerPerks_Template.ini` with smiles tag information.
+5. Compile the resulting as a usual KF1 mod.
+6. Manually change compiled file extension from `u` to `utx`.
+7. Copy-paste `SmileyTags` lines from generated `ServerPerks_Template.ini` to your server's `ServerPerks.ini`.
+8. Done! Start your server and enjoy.
+
+## Advanced Usage
+
+Here are all available arguments, if you want to tweak your output:
+
+- `-h`, `--help` - Prints the help message.
+- `-d`, `--dimensions <number>` - Specifies emoji dimensions. Higher the number, bigger will be the emojii in game chat. (default: 32)
+- `-p`, `--package <string>` - Package name, for config output. Defaults to executable's working directory if not specified.
+- `--mips <number>` - Set resulting texture's MIPS level. Don't touch if you don't know what is this. (default: 0)
+- `--masked <number>` - Set resulting texture's MASKED level. Don't touch if you don't know what is this. (default: 1)
+- `--dxt <number>` - Set resulting texture's DXT level. Don't touch if you don't know what is this. (default: 3)
+
+> [!NOTE]
+> About emojis dimensions - 128x128 are shown in the example screenshot, 32x32 will be same size as default ingame text. And if you want to make emoji pack's file size a bit smaller, change the [DXT compression] as well.
 
 ## Supported input file formats
 
-```text
-BMP, DIB, EPS, ICNS, ICO, IM, JPG, JPEG, J2K, J2P, JPX, MSP, PCX, PNG, PPM, SGI, SPIDER, TGA, TIFF, WebP, XBM.
-```
+- AVIF
+- BMP
+- DDS
+- Farbfeld
+- GIF
+- HDR
+- ICO
+- JPEG
+- EXR
+- PNG
+- PNM
+- QOI
+- TGA
+- TIFF
+- WebP
 
 ## Credits
 
 - [Marco] - I took the idea from his [Server Perks].
-- [dkanus]- he hinted me that I can simply rename `u` package to `utx`.
-- Google - your [android 7 emojis] were the best.
+- [dkanus] - he hinted me that I can simply rename `u` package to `utx`.
+- Google - your [android 7 emojis] are the best.

@@ -1,0 +1,44 @@
+name: Test
+
+on:
+  push:
+    branches:
+      - main
+      - rust
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  start:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+
+    name: Start `cargo build / test` on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+
+    env:
+      CARGO_INCREMENTAL: 0
+      CARGO_PROFILE_TEST_DEBUG: 0
+      CARGO_TERM_COLOR: always
+      RUST_BACKTRACE: full
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Rust Toolchain
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Set up Rust Cache
+        uses: Swatinem/rust-cache@v2
+        with:
+          prefix-key: v0-rust
+          shared-key: kf_emoji_generator
+          cache-targets: true
+          cache-all-crates: true
+
+      - name: Run CLI Tests
+        run: cargo test -- --test-threads 1
