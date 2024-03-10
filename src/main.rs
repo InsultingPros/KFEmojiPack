@@ -92,8 +92,8 @@ fn convert_to_tga_par(internal_args: &InternalArgs) -> io::Result<()> {
     entries.into_par_iter().for_each(|mut entry| {
         if let Ok(mut img) = image::open(entry.as_path()) {
             img = img.resize_exact(
-                internal_args.cli_args.dimension as u32,
-                internal_args.cli_args.dimension as u32,
+                internal_args.cli_args.dimension,
+                internal_args.cli_args.dimension,
                 Lanczos3,
             );
 

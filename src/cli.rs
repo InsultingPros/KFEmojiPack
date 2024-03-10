@@ -13,5 +13,5 @@ pub struct Options {
         default = "32",
         help = "Specifies emoji dimensions."
     )]
-    pub size: u16,
+    pub size: u32,
 }

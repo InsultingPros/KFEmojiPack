@@ -22,7 +22,7 @@ pub struct Directories {
 }
 
 pub struct CliArgs {
-    pub dimension: u16,
+    pub dimension: u32,
 }
 
 impl Directories {
