@@ -8,7 +8,7 @@
 [android 7 emojis]: https://emojipedia.org/google/android-7.0/
 [ServerPerks_Template.ini]: Configs/ServerPerks_Template.ini
 
-# KF Emoji Pack
+# KF Emoji Generator
 
 [![GitHub all releases](https://img.shields.io/github/downloads/InsultingPros/KFEmojiPack/total)](https://github.com/InsultingPros/KFEmojiPack/releases)
 
