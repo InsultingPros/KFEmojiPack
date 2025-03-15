@@ -35,6 +35,9 @@ pub fn convert_to_tga_par(internal_args: &InternalArgs) -> Result<(), MyErrors> 
                 internal_args.cli_args.dimensions,
                 Lanczos3,
             );
+            // I know this is not optimal, so fix this later
+            img = img.into_rgba8().into();
+            img = img.flipv();
 
             entry.set_extension(OUTPUT_EXTENSION);
             if let Some(new_file_name) = entry.file_name() {
